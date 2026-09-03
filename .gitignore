@@ -1,0 +1,7 @@
+__pycache__/
+*.pyc
+*.crdownload
+output/*
+piper_old/
+piper_windows_amd64/
+.env
