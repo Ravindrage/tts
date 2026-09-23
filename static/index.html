@@ -1,0 +1,2400 @@
+<!DOCTYPE html>
+<html lang="hi">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="description"
+        content="Hindi Text to Speech - Convert Hindi Satsang text into natural speech."
+    >
+
+    <title>Hindi TTS — Natural Hindi Text to Speech</title>
+
+    <style>
+
+        /* =========================================================
+           RESET
+        ========================================================= */
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            min-height: 100vh;
+            font-family:
+                Inter,
+                "Segoe UI",
+                Arial,
+                sans-serif;
+
+            color: #172033;
+
+            background:
+                radial-gradient(
+                    circle at 10% 10%,
+                    rgba(99, 102, 241, 0.18),
+                    transparent 28%
+                ),
+                radial-gradient(
+                    circle at 90% 20%,
+                    rgba(236, 72, 153, 0.16),
+                    transparent 28%
+                ),
+                linear-gradient(
+                    135deg,
+                    #f8faff 0%,
+                    #eef2ff 45%,
+                    #fdf2f8 100%
+                );
+
+            padding: 30px 18px 50px;
+        }
+
+
+        /* =========================================================
+           MAIN WRAPPER
+        ========================================================= */
+
+        .page {
+            width: 100%;
+            max-width: 1050px;
+            margin: 0 auto;
+        }
+
+
+        /* =========================================================
+           HEADER
+        ========================================================= */
+
+        .hero {
+            text-align: center;
+            padding: 25px 15px 30px;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+
+            padding: 8px 15px;
+
+            border-radius: 50px;
+
+            background: rgba(255,255,255,0.75);
+
+            border: 1px solid rgba(255,255,255,0.9);
+
+            box-shadow:
+                0 8px 30px rgba(31, 41, 55, 0.08);
+
+            color: #5b21b6;
+
+            font-size: 13px;
+            font-weight: 700;
+
+            margin-bottom: 18px;
+        }
+
+        .badge-dot {
+            width: 8px;
+            height: 8px;
+
+            border-radius: 50%;
+
+            background: #22c55e;
+
+            box-shadow:
+                0 0 0 5px rgba(34,197,94,0.12);
+        }
+
+        h1 {
+            font-size: clamp(34px, 6vw, 58px);
+            line-height: 1.05;
+
+            letter-spacing: -2px;
+
+            color: #111827;
+
+            margin-bottom: 15px;
+        }
+
+        .gradient-text {
+            background:
+                linear-gradient(
+                    90deg,
+                    #4f46e5,
+                    #7c3aed,
+                    #db2777
+                );
+
+            -webkit-background-clip: text;
+            background-clip: text;
+
+            color: transparent;
+        }
+
+        .hero-description {
+            max-width: 700px;
+
+            margin: 0 auto;
+
+            color: #667085;
+
+            font-size: 17px;
+            line-height: 1.7;
+        }
+
+
+        /* =========================================================
+           MAIN CARD
+        ========================================================= */
+
+        .app-card {
+            position: relative;
+
+            background:
+                rgba(255,255,255,0.88);
+
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+
+            border: 1px solid rgba(255,255,255,0.9);
+
+            border-radius: 28px;
+
+            padding: 28px;
+
+            box-shadow:
+                0 25px 70px rgba(31, 41, 55, 0.12);
+
+            overflow: hidden;
+        }
+
+        .app-card::before {
+            content: "";
+
+            position: absolute;
+
+            top: 0;
+            left: 0;
+            right: 0;
+
+            height: 4px;
+
+            background:
+                linear-gradient(
+                    90deg,
+                    #4f46e5,
+                    #7c3aed,
+                    #db2777
+                );
+        }
+
+
+        /* =========================================================
+           SECTION HEADER
+        ========================================================= */
+
+        .section-header {
+            display: flex;
+
+            justify-content: space-between;
+            align-items: center;
+
+            gap: 15px;
+
+            margin-bottom: 15px;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 800;
+
+            color: #1f2937;
+        }
+
+        .section-hint {
+            font-size: 13px;
+            color: #98a2b3;
+        }
+
+
+        /* =========================================================
+           TEXTAREA
+        ========================================================= */
+
+        .textarea-wrapper {
+            position: relative;
+        }
+
+        textarea {
+            display: block;
+
+            width: 100%;
+
+            min-height: 300px;
+
+            padding: 22px;
+
+            border: 2px solid #e4e7ec;
+
+            border-radius: 18px;
+
+            background:
+                rgba(255,255,255,0.85);
+
+            color: #1d2939;
+
+            font-family:
+                "Noto Sans Devanagari",
+                "Nirmala UI",
+                Arial,
+                sans-serif;
+
+            font-size: 19px;
+
+            line-height: 1.9;
+
+            resize: vertical;
+
+            outline: none;
+
+            transition:
+                border-color .25s ease,
+                box-shadow .25s ease,
+                background .25s ease;
+        }
+
+        textarea::placeholder {
+            color: #a0a8b5;
+        }
+
+        textarea:focus {
+            border-color: #7c3aed;
+
+            background: white;
+
+            box-shadow:
+                0 0 0 5px rgba(124,58,237,0.10);
+        }
+
+        textarea:disabled {
+            background: #f4f5f7;
+            cursor: not-allowed;
+        }
+
+        .counter {
+            display: flex;
+
+            justify-content: flex-end;
+
+            margin-top: 8px;
+
+            color: #98a2b3;
+
+            font-size: 13px;
+        }
+
+        #charCount {
+            font-weight: 700;
+            color: #667085;
+        }
+
+
+        /* =========================================================
+           CONTROLS
+        ========================================================= */
+
+        .controls {
+            display: grid;
+
+            grid-template-columns:
+                1fr
+                1fr;
+
+            gap: 16px;
+
+            margin-top: 20px;
+        }
+
+        .control {
+            padding: 17px;
+
+            border-radius: 16px;
+
+            background:
+                #f8f9fc;
+
+            border: 1px solid #eaecf0;
+        }
+
+        label {
+            display: block;
+
+            margin-bottom: 9px;
+
+            font-size: 13px;
+
+            font-weight: 800;
+
+            color: #344054;
+        }
+
+        select {
+            width: 100%;
+
+            padding: 13px 14px;
+
+            border-radius: 11px;
+
+            border: 1px solid #d0d5dd;
+
+            background: white;
+
+            color: #1d2939;
+
+            font-size: 15px;
+
+            outline: none;
+
+            cursor: pointer;
+
+            transition: .2s ease;
+        }
+
+        select:focus {
+            border-color: #7c3aed;
+
+            box-shadow:
+                0 0 0 4px rgba(124,58,237,0.08);
+        }
+
+        select:disabled {
+            background: #f2f4f7;
+            cursor: not-allowed;
+        }
+
+
+        /* =========================================================
+           GENERATE BUTTON
+        ========================================================= */
+
+        .generate-btn {
+            position: relative;
+
+            width: 100%;
+
+            margin-top: 22px;
+
+            padding: 17px 22px;
+
+            border: none;
+
+            border-radius: 15px;
+
+            background:
+                linear-gradient(
+                    100deg,
+                    #4f46e5,
+                    #7c3aed,
+                    #db2777
+                );
+
+            color: white;
+
+            font-size: 17px;
+
+            font-weight: 800;
+
+            cursor: pointer;
+
+            box-shadow:
+                0 12px 25px rgba(99,102,241,0.28);
+
+            transition:
+                transform .2s ease,
+                box-shadow .2s ease,
+                opacity .2s ease;
+
+            overflow: hidden;
+        }
+
+        .generate-btn::after {
+            content: "";
+
+            position: absolute;
+
+            top: 0;
+            left: -100%;
+
+            width: 60%;
+            height: 100%;
+
+            background:
+                linear-gradient(
+                    90deg,
+                    transparent,
+                    rgba(255,255,255,0.28),
+                    transparent
+                );
+
+            transform: skewX(-20deg);
+
+            transition: left .6s ease;
+        }
+
+        .generate-btn:hover::after {
+            left: 140%;
+        }
+
+        .generate-btn:hover {
+            transform: translateY(-2px);
+
+            box-shadow:
+                0 17px 32px rgba(99,102,241,0.35);
+        }
+
+        .generate-btn:active {
+            transform: translateY(0);
+        }
+
+        .generate-btn:disabled {
+            opacity: .55;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+
+        /* =========================================================
+           PROGRESS AREA
+        ========================================================= */
+
+        .progress-container {
+            display: none;
+
+            margin-top: 28px;
+
+            padding: 22px;
+
+            border-radius: 20px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #f8f9ff,
+                    #faf5ff
+                );
+
+            border: 1px solid #e9d5ff;
+        }
+
+        .progress-top {
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+            margin-bottom: 12px;
+        }
+
+        .progress-label {
+            font-size: 14px;
+            font-weight: 800;
+            color: #475467;
+        }
+
+        .progress-number {
+            font-size: 18px;
+            font-weight: 900;
+            color: #6d28d9;
+        }
+
+        .progress-bar {
+            position: relative;
+
+            width: 100%;
+
+            height: 13px;
+
+            background: #e9dff8;
+
+            border-radius: 20px;
+
+            overflow: hidden;
+        }
+
+        .progress {
+            position: relative;
+
+            width: 0%;
+
+            height: 100%;
+
+            border-radius: 20px;
+
+            background:
+                linear-gradient(
+                    90deg,
+                    #4f46e5,
+                    #7c3aed,
+                    #db2777
+                );
+
+            transition:
+                width .5s ease;
+        }
+
+        .progress::after {
+            content: "";
+
+            position: absolute;
+
+            top: 0;
+            right: 0;
+
+            width: 80px;
+            height: 100%;
+
+            background:
+                linear-gradient(
+                    90deg,
+                    transparent,
+                    rgba(255,255,255,.45)
+                );
+
+            animation:
+                progressShine 1.5s infinite;
+        }
+
+        @keyframes progressShine {
+
+            0% {
+                transform: translateX(-80px);
+            }
+
+            100% {
+                transform: translateX(80px);
+            }
+
+        }
+
+        .status {
+            margin-top: 15px;
+
+            text-align: center;
+
+            color: #475467;
+
+            font-size: 15px;
+
+            min-height: 22px;
+        }
+
+        .job-id {
+            margin-top: 8px;
+
+            text-align: center;
+
+            color: #98a2b3;
+
+            font-size: 11px;
+
+            word-break: break-all;
+        }
+
+        .timer {
+            margin-top: 7px;
+
+            text-align: center;
+
+            color: #667085;
+
+            font-size: 13px;
+        }
+
+
+        /* =========================================================
+           WARNING
+        ========================================================= */
+
+        .warning {
+            display: none;
+
+            margin-top: 12px;
+
+            padding: 13px 15px;
+
+            border-radius: 12px;
+
+            background: #fffaeb;
+
+            border: 1px solid #fedf89;
+
+            color: #92400e;
+
+            font-size: 13px;
+
+            line-height: 1.6;
+
+            text-align: center;
+        }
+
+
+        /* =========================================================
+           ERROR
+        ========================================================= */
+
+        .error {
+            display: none;
+
+            margin-top: 18px;
+
+            padding: 15px 17px;
+
+            border-radius: 13px;
+
+            background: #fff1f2;
+
+            border: 1px solid #fecdd3;
+
+            color: #be123c;
+
+            font-size: 14px;
+
+            line-height: 1.6;
+
+            white-space: pre-wrap;
+        }
+
+
+        /* =========================================================
+           RESULT
+        ========================================================= */
+
+        .result {
+            display: none;
+
+            margin-top: 25px;
+
+            padding: 24px;
+
+            border-radius: 20px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #ecfdf3,
+                    #f0fdf4
+                );
+
+            border: 1px solid #bbf7d0;
+        }
+
+        .result-header {
+            display: flex;
+
+            align-items: center;
+
+            gap: 12px;
+
+            margin-bottom: 15px;
+        }
+
+        .success-icon {
+            display: flex;
+
+            align-items: center;
+            justify-content: center;
+
+            width: 42px;
+            height: 42px;
+
+            border-radius: 50%;
+
+            background: #dcfce7;
+
+            color: #15803d;
+
+            font-size: 21px;
+        }
+
+        .result-title {
+            font-size: 18px;
+
+            font-weight: 800;
+
+            color: #166534;
+        }
+
+        audio {
+            width: 100%;
+
+            margin-top: 8px;
+
+            border-radius: 12px;
+        }
+
+        .download {
+            display: flex;
+
+            align-items: center;
+            justify-content: center;
+
+            gap: 8px;
+
+            width: 100%;
+
+            margin-top: 15px;
+
+            padding: 13px;
+
+            border-radius: 11px;
+
+            background: #166534;
+
+            color: white;
+
+            text-decoration: none;
+
+            font-size: 15px;
+
+            font-weight: 800;
+
+            transition: .2s ease;
+        }
+
+        .download:hover {
+            background: #14532d;
+
+            transform: translateY(-1px);
+        }
+
+        .new-generation {
+            width: 100%;
+
+            margin-top: 10px;
+
+            padding: 13px;
+
+            border: 1px solid #d0d5dd;
+
+            border-radius: 11px;
+
+            background: white;
+
+            color: #344054;
+
+            font-size: 15px;
+
+            font-weight: 700;
+
+            cursor: pointer;
+
+            transition: .2s ease;
+        }
+
+        .new-generation:hover {
+            background: #f9fafb;
+        }
+
+
+        /* =========================================================
+           INFO CARDS
+        ========================================================= */
+
+        .info-grid {
+            display: grid;
+
+            grid-template-columns:
+                repeat(3, 1fr);
+
+            gap: 12px;
+
+            margin-top: 25px;
+        }
+
+        .info-card {
+            padding: 18px;
+
+            border-radius: 16px;
+
+            background: rgba(255,255,255,0.65);
+
+            border: 1px solid rgba(255,255,255,0.85);
+
+            box-shadow:
+                0 8px 25px rgba(31,41,55,0.05);
+        }
+
+        .info-icon {
+            font-size: 24px;
+
+            margin-bottom: 10px;
+        }
+
+        .info-card strong {
+            display: block;
+
+            margin-bottom: 5px;
+
+            color: #344054;
+
+            font-size: 14px;
+        }
+
+        .info-card span {
+            color: #667085;
+
+            font-size: 12px;
+
+            line-height: 1.5;
+        }
+
+
+        /* =========================================================
+           FOOTER
+        ========================================================= */
+
+        footer {
+            text-align: center;
+
+            margin-top: 25px;
+
+            color: #98a2b3;
+
+            font-size: 12px;
+        }
+
+
+        /* =========================================================
+           MOBILE
+        ========================================================= */
+
+        @media (max-width: 700px) {
+
+            body {
+                padding:
+                    12px
+                    10px
+                    30px;
+            }
+
+            .hero {
+                padding:
+                    18px
+                    10px
+                    22px;
+            }
+
+            h1 {
+                font-size: 36px;
+                letter-spacing: -1.2px;
+            }
+
+            .hero-description {
+                font-size: 15px;
+            }
+
+            .app-card {
+                padding: 17px;
+
+                border-radius: 21px;
+            }
+
+            textarea {
+                min-height: 250px;
+
+                padding: 16px;
+
+                font-size: 17px;
+            }
+
+            .controls {
+                grid-template-columns: 1fr;
+            }
+
+            .control {
+                padding: 14px;
+            }
+
+            .section-header {
+                align-items: flex-start;
+
+                flex-direction: column;
+
+                gap: 5px;
+            }
+
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .progress-container {
+                padding: 17px;
+            }
+
+            .result {
+                padding: 17px;
+            }
+
+        }
+
+
+        /* =========================================================
+           SMALL PHONES
+        ========================================================= */
+
+        @media (max-width: 400px) {
+
+            h1 {
+                font-size: 31px;
+            }
+
+            .badge {
+                font-size: 11px;
+            }
+
+            textarea {
+                min-height: 220px;
+            }
+
+            .generate-btn {
+                font-size: 16px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<div class="page">
+
+
+    <!-- =======================================================
+         HERO
+    ======================================================== -->
+
+    <header class="hero">
+
+        <div class="badge">
+
+            <span class="badge-dot"></span>
+
+            Hindi AI Text to Speech
+
+        </div>
+
+
+        <h1>
+
+            Turn Hindi Text Into
+
+            <span class="gradient-text">
+                Natural Speech
+            </span>
+
+        </h1>
+
+
+        <p class="hero-description">
+
+            Convert Hindi Satsang, spiritual and everyday text
+            into clear natural-sounding speech using our Hindi
+            voice engine.
+
+        </p>
+
+    </header>
+
+
+    <!-- =======================================================
+         APPLICATION
+    ======================================================== -->
+
+    <main class="app-card">
+
+
+        <div class="section-header">
+
+            <div class="section-title">
+                📝 Enter your Hindi text
+            </div>
+
+            <div class="section-hint">
+                Up to 100,000 characters
+            </div>
+
+        </div>
+
+
+        <!-- TEXTAREA -->
+
+        <div class="textarea-wrapper">
+
+            <textarea
+                id="text"
+                placeholder="यहाँ अपना हिंदी टेक्स्ट लिखें या पेस्ट करें..."
+            ></textarea>
+
+        </div>
+
+
+        <div class="counter">
+
+            <span id="charCount">0</span>
+
+            &nbsp;/&nbsp;
+
+            100,000 characters
+
+        </div>
+
+
+        <!-- ===================================================
+             CONTROLS
+        ==================================================== -->
+
+        <div class="controls">
+
+
+            <div class="control">
+
+                <label for="voice">
+                    🎙️ Voice
+                </label>
+
+                <select id="voice">
+
+                    <option value="hindi">
+                        🇮🇳 Hindi
+                    </option>
+
+                    <option value="male">
+                        👨 Male
+                    </option>
+
+                    <option value="female">
+                        👩 Female
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div class="control">
+
+                <label for="speed">
+                    ⚡ Speech Speed
+                </label>
+
+                <select id="speed">
+
+                    <option value="0.8">
+                        0.8× — Slow
+                    </option>
+
+                    <option value="0.9">
+                        0.9×
+                    </option>
+
+                    <option
+                        value="1.0"
+                        selected
+                    >
+                        1.0× — Normal
+                    </option>
+
+                    <option value="1.1">
+                        1.1×
+                    </option>
+
+                    <option value="1.2">
+                        1.2× — Fast
+                    </option>
+
+                    <option value="1.5">
+                        1.5×
+                    </option>
+
+                </select>
+
+            </div>
+
+
+        </div>
+
+
+        <!-- ===================================================
+             GENERATE
+        ==================================================== -->
+
+        <button
+            id="generateBtn"
+            class="generate-btn"
+            onclick="generateSpeech()"
+        >
+
+            ✨ Generate Speech
+
+        </button>
+
+
+        <!-- ===================================================
+             PROGRESS
+        ==================================================== -->
+
+        <div
+            id="progressContainer"
+            class="progress-container"
+        >
+
+            <div class="progress-top">
+
+                <div class="progress-label">
+                    AI Speech Generation
+                </div>
+
+                <div
+                    id="progressPercent"
+                    class="progress-number"
+                >
+                    0%
+                </div>
+
+            </div>
+
+
+            <div class="progress-bar">
+
+                <div
+                    id="progress"
+                    class="progress"
+                ></div>
+
+            </div>
+
+
+            <div
+                id="status"
+                class="status"
+            >
+                Starting...
+            </div>
+
+
+            <div
+                id="jobId"
+                class="job-id"
+            ></div>
+
+
+            <div
+                id="timer"
+                class="timer"
+            >
+                Elapsed time: 0:00
+            </div>
+
+        </div>
+
+
+        <!-- WARNING -->
+
+        <div
+            id="warning"
+            class="warning"
+        >
+
+            ⏳ Please keep this browser tab open while your
+            speech is being generated. The processing continues
+            on the server in the background.
+
+        </div>
+
+
+        <!-- ERROR -->
+
+        <div
+            id="error"
+            class="error"
+        ></div>
+
+
+        <!-- ===================================================
+             RESULT
+        ==================================================== -->
+
+        <div
+            id="result"
+            class="result"
+        >
+
+            <div class="result-header">
+
+                <div class="success-icon">
+                    ✓
+                </div>
+
+                <div class="result-title">
+                    Audio generated successfully
+                </div>
+
+            </div>
+
+
+            <audio
+                id="audio"
+                controls
+            ></audio>
+
+
+            <a
+                id="download"
+                class="download"
+                download
+            >
+
+                ⬇️ Download WAV Audio
+
+            </a>
+
+
+            <button
+                type="button"
+                id="newGenerationBtn"
+                class="new-generation"
+                onclick="resetForm()"
+            >
+
+                Generate Another Speech
+
+            </button>
+
+        </div>
+
+
+    </main>
+
+
+    <!-- =======================================================
+         FEATURES
+    ======================================================== -->
+
+    <section class="info-grid">
+
+
+        <div class="info-card">
+
+            <div class="info-icon">
+                🇮🇳
+            </div>
+
+            <strong>
+                Hindi Optimized
+            </strong>
+
+            <span>
+                Designed for Hindi text, Satsang,
+                spiritual content and long-form narration.
+            </span>
+
+        </div>
+
+
+        <div class="info-card">
+
+            <div class="info-icon">
+                ⚡
+            </div>
+
+            <strong>
+                Background Processing
+            </strong>
+
+            <span>
+                Long text is divided into smaller sections
+                and processed automatically.
+            </span>
+
+        </div>
+
+
+        <div class="info-card">
+
+            <div class="info-icon">
+                🎧
+            </div>
+
+            <strong>
+                WAV Output
+            </strong>
+
+            <span>
+                Listen directly in your browser or download
+                the generated audio file.
+            </span>
+
+        </div>
+
+
+    </section>
+
+
+    <footer>
+
+        Hindi Text to Speech · Powered by Piper TTS
+
+        <br>
+
+        Generated audio files are automatically removed
+        after approximately 5 minutes.
+
+    </footer>
+
+
+</div>
+
+
+<script>
+
+
+/* ============================================================
+   ELEMENTS
+============================================================ */
+
+const textArea =
+    document.getElementById("text");
+
+const charCount =
+    document.getElementById("charCount");
+
+const voiceSelect =
+    document.getElementById("voice");
+
+const speedSelect =
+    document.getElementById("speed");
+
+const generateBtn =
+    document.getElementById("generateBtn");
+
+const progressContainer =
+    document.getElementById("progressContainer");
+
+const progress =
+    document.getElementById("progress");
+
+const progressPercent =
+    document.getElementById("progressPercent");
+
+const status =
+    document.getElementById("status");
+
+const jobIdElement =
+    document.getElementById("jobId");
+
+const timerElement =
+    document.getElementById("timer");
+
+const warning =
+    document.getElementById("warning");
+
+const result =
+    document.getElementById("result");
+
+const audio =
+    document.getElementById("audio");
+
+const download =
+    document.getElementById("download");
+
+const errorBox =
+    document.getElementById("error");
+
+
+/* ============================================================
+   VARIABLES
+============================================================ */
+
+let isGenerating = false;
+
+let currentJobId = null;
+
+let startTime = null;
+
+let timerInterval = null;
+
+
+/* ============================================================
+   CHARACTER COUNTER
+============================================================ */
+
+textArea.addEventListener(
+    "input",
+    function () {
+
+        charCount.textContent =
+            textArea.value.length;
+
+    }
+);
+
+
+/* ============================================================
+   RESPONSE HANDLER
+============================================================ */
+
+async function readResponse(response) {
+
+    const contentType =
+        response.headers.get("content-type") || "";
+
+
+    if (
+        contentType.includes(
+            "application/json"
+        )
+    ) {
+
+        try {
+
+            return await response.json();
+
+        } catch (error) {
+
+            throw new Error(
+                "Server returned invalid JSON."
+            );
+
+        }
+
+    }
+
+
+    let text = "";
+
+    try {
+
+        text =
+            await response.text();
+
+    } catch (error) {
+
+        text = "";
+
+    }
+
+
+    if (text) {
+
+        const cleanText =
+            text
+                .replace(
+                    /<[^>]*>/g,
+                    " "
+                )
+                .replace(
+                    /\s+/g,
+                    " "
+                )
+                .trim()
+                .substring(
+                    0,
+                    500
+                );
+
+
+        throw new Error(
+            "Server returned HTTP "
+            + response.status
+            + (
+                cleanText
+                    ? ": " + cleanText
+                    : ""
+            )
+        );
+
+    }
+
+
+    throw new Error(
+        "Server returned HTTP "
+        + response.status
+        + "."
+    );
+
+}
+
+
+/* ============================================================
+   GENERATE
+============================================================ */
+
+async function generateSpeech() {
+
+
+    if (isGenerating) {
+
+        return;
+
+    }
+
+
+    const text =
+        textArea.value.trim();
+
+
+    const voice =
+        voiceSelect.value;
+
+
+    const speed =
+        parseFloat(
+            speedSelect.value
+        );
+
+
+    if (!text) {
+
+        showError(
+            "Please enter some Hindi text."
+        );
+
+        return;
+
+    }
+
+
+    if (text.length > 100000) {
+
+        showError(
+            "Maximum 100,000 characters are allowed."
+        );
+
+        return;
+
+    }
+
+
+    isGenerating = true;
+
+    currentJobId = null;
+
+    startTimer();
+
+    hideError();
+
+
+    result.style.display =
+        "none";
+
+
+    progressContainer.style.display =
+        "block";
+
+
+    warning.style.display =
+        "block";
+
+
+    setProgress(
+        0,
+        "Submitting TTS job..."
+    );
+
+
+    jobIdElement.textContent =
+        "";
+
+
+    generateBtn.disabled =
+        true;
+
+
+    voiceSelect.disabled =
+        true;
+
+
+    speedSelect.disabled =
+        true;
+
+
+    textArea.disabled =
+        true;
+
+
+    generateBtn.textContent =
+        "Generating...";
+
+
+    try {
+
+
+        const response =
+            await fetch(
+                "/generate",
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json",
+
+                        "Accept":
+                            "application/json"
+                    },
+
+                    body: JSON.stringify({
+                        text: text,
+                        voice: voice,
+                        speed: speed
+                    })
+                }
+            );
+
+
+        let data;
+
+
+        try {
+
+            data =
+                await readResponse(
+                    response
+                );
+
+        } catch (error) {
+
+            if (
+                response.status === 502 ||
+                response.status === 503 ||
+                response.status === 504
+            ) {
+
+                throw new Error(
+                    "The server/gateway returned HTTP "
+                    + response.status
+                    + ". The TTS job may still be running."
+                );
+
+            }
+
+            throw error;
+
+        }
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                data.detail ||
+                data.message ||
+                "Could not start TTS job."
+            );
+
+        }
+
+
+        if (!data.job_id) {
+
+            throw new Error(
+                "Server did not return a Job ID."
+            );
+
+        }
+
+
+        currentJobId =
+            data.job_id;
+
+
+        jobIdElement.textContent =
+            "Job ID: " + currentJobId;
+
+
+        setProgress(
+            0,
+            "Job started. Waiting for Piper..."
+        );
+
+
+        await pollJob(
+            currentJobId
+        );
+
+
+    } catch (error) {
+
+
+        console.error(
+            "TTS ERROR:",
+            error
+        );
+
+
+        showError(
+            error.message ||
+            "An unexpected error occurred."
+        );
+
+
+        warning.style.display =
+            "none";
+
+
+    } finally {
+
+
+        stopTimer();
+
+
+        isGenerating = false;
+
+
+        generateBtn.disabled =
+            false;
+
+
+        voiceSelect.disabled =
+            false;
+
+
+        speedSelect.disabled =
+            false;
+
+
+        textArea.disabled =
+            false;
+
+
+        generateBtn.textContent =
+            "✨ Generate Speech";
+
+    }
+
+}
+
+
+/* ============================================================
+   POLL
+============================================================ */
+
+async function pollJob(jobId) {
+
+
+    let consecutiveErrors = 0;
+
+
+    while (true) {
+
+
+        try {
+
+
+            const response =
+                await fetch(
+                    `/status/${encodeURIComponent(jobId)}`,
+                    {
+                        method: "GET",
+
+                        cache: "no-store",
+
+                        headers: {
+                            "Accept":
+                                "application/json"
+                        }
+                    }
+                );
+
+
+            let data;
+
+
+            try {
+
+                data =
+                    await readResponse(
+                        response
+                    );
+
+            } catch (error) {
+
+                consecutiveErrors++;
+
+
+                console.warn(
+                    "Status response error:",
+                    error
+                );
+
+
+                if (
+                    consecutiveErrors < 5
+                ) {
+
+                    status.textContent =
+                        "Waiting for server response... "
+                        + "("
+                        + consecutiveErrors
+                        + "/5)";
+
+                    await sleep(2000);
+
+                    continue;
+
+                }
+
+
+                throw error;
+
+            }
+
+
+            consecutiveErrors = 0;
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    data.detail ||
+                    data.message ||
+                    "Unable to get job status."
+                );
+
+            }
+
+
+            let percent =
+                Number(
+                    data.progress
+                );
+
+
+            if (
+                !Number.isFinite(percent)
+            ) {
+
+                percent = 0;
+
+            }
+
+
+            percent =
+                Math.max(
+                    0,
+                    Math.min(
+                        100,
+                        percent
+                    )
+                );
+
+
+            /* -------------------------------------------------
+               QUEUED
+            ------------------------------------------------- */
+
+            if (
+                data.status === "queued"
+            ) {
+
+                setProgress(
+                    percent,
+                    "Waiting in queue for Piper..."
+                );
+
+            }
+
+
+            /* -------------------------------------------------
+               PROCESSING
+            ------------------------------------------------- */
+
+            else if (
+                data.status === "processing"
+            ) {
+
+                let message =
+                    "Generating audio...";
+
+
+                const currentChunk =
+                    Number(
+                        data.current_chunk
+                    );
+
+
+                const totalChunks =
+                    Number(
+                        data.total_chunks
+                    );
+
+
+                if (
+                    totalChunks > 0 &&
+                    currentChunk > 0
+                ) {
+
+                    message =
+                        "Generating chunk "
+                        + currentChunk
+                        + " / "
+                        + totalChunks;
+
+                }
+
+
+                setProgress(
+                    percent,
+                    message
+                );
+
+            }
+
+
+            /* -------------------------------------------------
+               MERGING
+            ------------------------------------------------- */
+
+            else if (
+                data.status === "merging"
+            ) {
+
+                setProgress(
+                    Math.max(
+                        percent,
+                        95
+                    ),
+                    "Combining all audio chunks..."
+                );
+
+            }
+
+
+            /* -------------------------------------------------
+               COMPLETED
+            ------------------------------------------------- */
+
+            else if (
+                data.status === "completed"
+            ) {
+
+
+                setProgress(
+                    100,
+                    "Speech generation completed successfully."
+                );
+
+
+                const audioUrl =
+                    `/audio/${encodeURIComponent(jobId)}?t=${Date.now()}`;
+
+
+                audio.src =
+                    audioUrl;
+
+
+                audio.load();
+
+
+                download.href =
+                    audioUrl;
+
+
+                download.download =
+                    data.filename ||
+                    `hindi_tts_${jobId}.wav`;
+
+
+                result.style.display =
+                    "block";
+
+
+                warning.style.display =
+                    "none";
+
+
+                setTimeout(
+                    function () {
+
+                        result.scrollIntoView({
+                            behavior: "smooth",
+                            block: "start"
+                        });
+
+                    },
+                    100
+                );
+
+
+                return;
+
+            }
+
+
+            /* -------------------------------------------------
+               FAILED
+            ------------------------------------------------- */
+
+            else if (
+                data.status === "failed"
+            ) {
+
+                throw new Error(
+                    data.error ||
+                    "TTS generation failed."
+                );
+
+            }
+
+
+            /* -------------------------------------------------
+               UNKNOWN
+            ------------------------------------------------- */
+
+            else {
+
+                status.textContent =
+                    "Server status: "
+                    + (
+                        data.status ||
+                        "unknown"
+                    );
+
+            }
+
+
+        } catch (error) {
+
+            console.error(
+                "Polling error:",
+                error
+            );
+
+            throw error;
+
+        }
+
+
+        await sleep(1500);
+
+    }
+
+}
+
+
+/* ============================================================
+   PROGRESS
+============================================================ */
+
+function setProgress(
+    percent,
+    message
+) {
+
+
+    let safePercent =
+        Number(percent);
+
+
+    if (
+        !Number.isFinite(
+            safePercent
+        )
+    ) {
+
+        safePercent = 0;
+
+    }
+
+
+    safePercent =
+        Math.max(
+            0,
+            Math.min(
+                100,
+                safePercent
+            )
+        );
+
+
+    progress.style.width =
+        safePercent.toFixed(1)
+        + "%";
+
+
+    progressPercent.textContent =
+        Math.round(
+            safePercent
+        )
+        + "%";
+
+
+    if (message) {
+
+        status.textContent =
+            message;
+
+    }
+
+}
+
+
+/* ============================================================
+   TIMER
+============================================================ */
+
+function startTimer() {
+
+    stopTimer();
+
+    startTime =
+        Date.now();
+
+    updateTimer();
+
+    timerInterval =
+        setInterval(
+            updateTimer,
+            1000
+        );
+
+}
+
+
+function updateTimer() {
+
+
+    if (!startTime) {
+
+        return;
+
+    }
+
+
+    const elapsed =
+        Math.floor(
+            (
+                Date.now()
+                - startTime
+            ) / 1000
+        );
+
+
+    const minutes =
+        Math.floor(
+            elapsed / 60
+        );
+
+
+    const seconds =
+        elapsed % 60;
+
+
+    timerElement.textContent =
+        "Elapsed time: "
+        + minutes
+        + ":"
+        + String(
+            seconds
+        ).padStart(
+            2,
+            "0"
+        );
+
+}
+
+
+function stopTimer() {
+
+
+    if (timerInterval) {
+
+        clearInterval(
+            timerInterval
+        );
+
+        timerInterval =
+            null;
+
+    }
+
+}
+
+
+/* ============================================================
+   SLEEP
+============================================================ */
+
+function sleep(
+    milliseconds
+) {
+
+    return new Promise(
+        function (resolve) {
+
+            setTimeout(
+                resolve,
+                milliseconds
+            );
+
+        }
+    );
+
+}
+
+
+/* ============================================================
+   ERROR
+============================================================ */
+
+function showError(
+    message
+) {
+
+    errorBox.textContent =
+        message;
+
+    errorBox.style.display =
+        "block";
+
+}
+
+
+function hideError() {
+
+    errorBox.textContent =
+        "";
+
+    errorBox.style.display =
+        "none";
+
+}
+
+
+/* ============================================================
+   RESET
+============================================================ */
+
+function resetForm() {
+
+
+    audio.pause();
+
+    audio.removeAttribute(
+        "src"
+    );
+
+    audio.load();
+
+
+    download.removeAttribute(
+        "href"
+    );
+
+    download.removeAttribute(
+        "download"
+    );
+
+
+    result.style.display =
+        "none";
+
+
+    progressContainer.style.display =
+        "none";
+
+
+    warning.style.display =
+        "none";
+
+
+    setProgress(
+        0,
+        "Starting..."
+    );
+
+
+    jobIdElement.textContent =
+        "";
+
+
+    stopTimer();
+
+
+    startTime =
+        null;
+
+
+    timerElement.textContent =
+        "Elapsed time: 0:00";
+
+
+    hideError();
+
+
+    textArea.disabled =
+        false;
+
+
+    voiceSelect.disabled =
+        false;
+
+
+    speedSelect.disabled =
+        false;
+
+
+    generateBtn.disabled =
+        false;
+
+
+    generateBtn.textContent =
+        "✨ Generate Speech";
+
+
+    isGenerating =
+        false;
+
+
+    currentJobId =
+        null;
+
+
+    textArea.focus();
+
+}
+
+
+/* ============================================================
+   INITIALIZE
+============================================================ */
+
+charCount.textContent =
+    textArea.value.length;
+
+</script>
+
+
+</body>
+
+</html>
